@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from enum import Enum
 
@@ -48,4 +48,6 @@ class ProcessingResult:
     invoice_number: str
     status: ProcessingStatus
     issues: tuple[ValidationIssue, ...] = ()
-    processed_at: datetime = field(default_factory=datetime.utcnow)
+    processed_at: datetime = field(
+    default_factory=lambda: datetime.now(UTC)
+)
