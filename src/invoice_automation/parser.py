@@ -8,26 +8,108 @@ class InvoiceParseError(Exception):
     """Raised when invoice text cannot be parsed into an Invoice."""
 
 
-def _extract_field(text: str, field_name: str, required: bool = True) -> str | None:
-    """Extract a labeled field from invoice text."""
+KNOWN_FIELDS = {
+    "Invoice Number",
+    "Supplier ID",
+    "Supplier",
+    "Invoice Date",
+    "Due Date",
+    "PO Number",
+    "Currency",
+    "Subtotal",
+    "Tax",
+    "Total",
+}
 
-    prefix = f"{field_name}:"
+def _extract_supplier_name(text: str) -> str:
+    """
+    Extract supplier name from the invoice.
+
+    Supports both:
+        Supplier: ABC Supplies Ltd.
+
+    and the generated PDF layout where the supplier name
+    appears as the first non-empty line.
+    """
+
+    labeled_supplier = _extract_field(
+        text,
+        "Supplier",
+        required=False,
+    )
+
+    if labeled_supplier:
+        return labeled_supplier
 
     for line in text.splitlines():
         line = line.strip()
 
-        if line.lower().startswith(prefix.lower()):
-            value = line[len(prefix):].strip()
+        if line:
+            return line
 
-            if value:
-                return value
+    raise InvoiceParseError("Supplier name not found")
 
-            if required:
-                raise InvoiceParseError(
-                    f"Required field '{field_name}' is empty"
-                )
+def _extract_field(
+    text: str,
+    field_name: str,
+    required: bool = True,
+    aliases: tuple[str, ...] = (),
+) -> str | None:
+    """Extract a labeled field from invoice text."""
 
-            return None
+    lines = [line.strip() for line in text.splitlines()]
+    field_names = (field_name, *aliases)
+
+    for index, line in enumerate(lines):
+        # Format: "Field: Value"
+        for current_field in field_names:
+            prefix = f"{current_field}:"
+
+            if line.lower().startswith(prefix.lower()):
+                value = line[len(prefix):].strip()
+
+                if value:
+                    return value
+
+                if required:
+                    raise InvoiceParseError(
+                        f"Required field '{field_name}' is empty"
+                    )
+
+                return None
+
+        # Format: "Field" followed by "Value"
+        if any(
+            line.lower() == current_field.lower()
+            for current_field in field_names
+        ):
+            if index + 1 >= len(lines):
+                if required:
+                    raise InvoiceParseError(
+                        f"Required field '{field_name}' is empty"
+                    )
+                return None
+
+            next_line = lines[index + 1]
+
+            if not next_line:
+                if required:
+                    raise InvoiceParseError(
+                        f"Required field '{field_name}' is empty"
+                    )
+                return None
+
+            if next_line.lower() in {
+                field.lower()
+                for field in KNOWN_FIELDS
+            }:
+                if required:
+                    raise InvoiceParseError(
+                        f"Required field '{field_name}' is empty"
+                    )
+                return None
+
+            return next_line
 
     if required:
         raise InvoiceParseError(
@@ -72,18 +154,22 @@ def parse_invoice_text(text: str, source_file: str) -> Invoice:
 
     invoice_number = _extract_field(text, "Invoice Number")
     supplier_id = _extract_field(text, "Supplier ID")
-    supplier_name = _extract_field(text, "Supplier")
+    supplier_name = _extract_supplier_name(text)
     invoice_date_value = _extract_field(text, "Invoice Date")
+
     due_date_value = _extract_field(
         text,
         "Due Date",
         required=False,
     )
+
     po_number = _extract_field(
         text,
         "PO Number",
         required=False,
+        aliases=("Purchase Order",),
     )
+
     currency = _extract_field(text, "Currency")
     subtotal_value = _extract_field(text, "Subtotal")
     tax_value = _extract_field(text, "Tax")

@@ -148,3 +148,120 @@ def test_invalid_amount_raises_parse_error():
 
     with pytest.raises(InvoiceParseError):
         parse_invoice_text(text, "invalid.pdf")
+
+
+def test_parse_label_and_value_on_separate_lines():
+    text = """
+    Invoice Number
+    INV-1001
+    Supplier ID
+    SUP-001
+    Supplier
+    ABC Supplies Ltd.
+    Invoice Date
+    18/09/2026
+    Due Date
+    18/10/2026
+    PO Number
+    PO-5001
+    Currency
+    USD
+    Subtotal
+    5200.00
+    Tax
+    780.00
+    Total
+    5980.00
+    """
+
+    invoice = parse_invoice_text(text, "INV-1001.pdf")
+
+    assert invoice.invoice_number == "INV-1001"
+    assert invoice.supplier_id == "SUP-001"
+    assert invoice.supplier_name == "ABC Supplies Ltd."
+    assert invoice.po_number == "PO-5001"
+    assert invoice.total == Decimal("5980.00")
+
+
+def test_optional_field_without_value_is_none():
+    text = """
+    Invoice Number
+    INV-1004
+    Supplier ID
+    SUP-001
+    Supplier
+    ABC Supplies Ltd.
+    Invoice Date
+    18/09/2026
+    Due Date
+    18/10/2026
+    PO Number
+    Currency
+    USD
+    Subtotal
+    3000.00
+    Tax
+    450.00
+    Total
+    3450.00
+    """
+
+    invoice = parse_invoice_text(text, "INV-1004.pdf")
+
+    assert invoice.po_number is None
+    assert invoice.currency == "USD"
+
+def test_parse_supplier_name_from_first_line():
+    text = """
+    ABC Supplies Ltd.
+    Supplier ID: SUP-001
+    INVOICE
+    Invoice Number
+    INV-1001
+    Invoice Date
+    18/09/2026
+    Due Date
+    18/10/2026
+    PO Number
+    PO-5001
+    Currency
+    USD
+    Subtotal
+    5200.00
+    Tax
+    780.00
+    Total
+    5980.00
+    """
+
+    invoice = parse_invoice_text(text, "INV-1001.pdf")
+
+    assert invoice.supplier_name == "ABC Supplies Ltd."
+
+
+def test_parse_purchase_order_alias():
+    text = """
+    ABC Supplies Ltd.
+    Supplier ID: SUP-001
+    INVOICE
+    Invoice Number
+    INV-1001
+    Invoice Date
+    18/09/2026
+    Due Date
+    18/10/2026
+    Purchase Order
+    PO-5001
+    Currency
+    USD
+    Subtotal
+    5200.00
+    Tax
+    780.00
+    Total
+    5980.00
+    """
+
+    invoice = parse_invoice_text(text, "INV-1001.pdf")
+
+    assert invoice.po_number == "PO-5001"
