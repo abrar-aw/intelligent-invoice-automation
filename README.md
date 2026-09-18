@@ -1,6 +1,6 @@
 # Intelligent Invoice Processing & Reconciliation Automation
 
-A portfolio-grade automation project that simulates a real accounts-payable workflow: ingest invoices, extract structured fields, validate business rules, reconcile against purchase orders, route exceptions, persist an audit trail, and generate operational reports.
+A automation project that simulates a real accounts-payable workflow: ingest invoices, extract structured fields, validate business rules, reconcile against purchase orders, route exceptions, persist an audit trail, and generate operational reports.
 
 ## Project goals
 
