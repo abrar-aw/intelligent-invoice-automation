@@ -1,0 +1,4 @@
+invoice_number,supplier_id,supplier_name,invoice_date,due_date,po_number,currency,subtotal,tax,total,source_file
+INV-1001,SUP-001,Acme Supplies,2026-09-01,2026-10-01,PO-5001,USD,100.00,15.00,115.00,invoice_1001.pdf
+INV-1002,SUP-002,Delta Office,2026-09-02,2026-10-02,PO-5002,USD,217.39,32.61,250.00,invoice_1002.pdf
+INV-1003,SUP-003,Tech Imports,2026-09-03,2026-10-03,PO-5003,BDT,130434.78,19565.22,150000.00,invoice_1003.pdf

@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: invoice-automation
+Version: 0.1.0
+Summary: Invoice processing and purchase-order reconciliation automation
+Requires-Python: >=3.11
+Requires-Dist: pandas<3,>=2.2
+Provides-Extra: test
+Requires-Dist: pytest<9,>=8; extra == "test"
+Provides-Extra: ocr
+Requires-Dist: pymupdf<2,>=1.24; extra == "ocr"
+Requires-Dist: pytesseract<1,>=0.3; extra == "ocr"
+Requires-Dist: Pillow<12,>=10; extra == "ocr"
+Provides-Extra: dashboard
+Requires-Dist: streamlit<2,>=1.40; extra == "dashboard"
+Provides-Extra: all
+Requires-Dist: pytest<9,>=8; extra == "all"
+Requires-Dist: pymupdf<2,>=1.24; extra == "all"
+Requires-Dist: pytesseract<1,>=0.3; extra == "all"
+Requires-Dist: Pillow<12,>=10; extra == "all"
+Requires-Dist: streamlit<2,>=1.40; extra == "all"

@@ -1,0 +1,4 @@
+po_number,supplier_id,currency,total,status
+PO-5001,SUP-001,USD,115.00,OPEN
+PO-5002,SUP-002,USD,250.00,APPROVED
+PO-5003,SUP-003,BDT,150000.00,OPEN

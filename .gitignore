@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+.vscode/
+.idea/
+*.db
+*.sqlite
+logs/*.log
+reports/generated/
+# Keep the sample directory structure, not generated documents.
+data/incoming/*
+data/processed/*
+data/exceptions/*
+data/duplicates/*
+!data/incoming/.gitkeep
+!data/processed/.gitkeep
+!data/exceptions/.gitkeep
+!data/duplicates/.gitkeep

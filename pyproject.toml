@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "invoice-automation"
+version = "0.1.0"
+description = "Invoice processing and purchase-order reconciliation automation"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.2,<3",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<9"]
+ocr = ["pymupdf>=1.24,<2", "pytesseract>=0.3,<1", "Pillow>=10,<12"]
+dashboard = ["streamlit>=1.40,<2"]
+all = ["pytest>=8,<9", "pymupdf>=1.24,<2", "pytesseract>=0.3,<1", "Pillow>=10,<12", "streamlit>=1.40,<2"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
